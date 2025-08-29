@@ -4,7 +4,7 @@ import { User } from "../user/user.model";
 import httpStatus from 'http-status-codes';
 import bcrypt from 'bcryptjs';
 
-import jwt from 'jsonwebtoken'
+import jwt, { SignOptions } from 'jsonwebtoken'
 import { envVars } from "../../config/env";
 
 
@@ -33,12 +33,18 @@ const credentialLogin = async (payload: Partial<IUser>) => {
         role: isUserExits.role
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {password: userPass, ...rest} = isUserExits;
+
     // const accessToken = generateToken(jwtPayload, envVars.JWT_SECRET, envVars.JWT_EXPIRES)
 
-    const accessToken = jwt.sign(jwtPayload, envVars.JWT_SECRET, {expiresIn: '1d'})
+    const accessToken = jwt.sign(jwtPayload, envVars.JWT_SECRET, {expiresIn: envVars.JWT_EXPIRES} as SignOptions)
+    const refreshToken = jwt.sign(jwtPayload, envVars.JWT_REFRESH_SECRET, {expiresIn: envVars.JWT_REFRESH_EXPIRED} as SignOptions);
 
     return {
-        accessToken
+        accessToken,
+        refreshToken,
+        user: rest
     }
 
 };

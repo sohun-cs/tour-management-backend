@@ -12,13 +12,16 @@ interface envTypes {
     JWT_EXPIRES: string
     SUPER_ADMIN_EMAIL: string
     SUPER_ADMIN_PASSWORD: string
+    JWT_REFRESH_SECRET: string
+    JWT_REFRESH_EXPIRED: string
 }
 
 
 const envConfigFunc = (): envTypes => {
 
     const envVarsArray: string[] = [
-        "DB_API", "PORT", "NODE_ENV", "SALT_ROUND", "JWT_SECRET", "JWT_EXPIRES", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD"
+        "DB_API", "PORT", "NODE_ENV", "SALT_ROUND", "JWT_SECRET", "JWT_EXPIRES", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD",
+        "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRED"
     ]
 
     envVarsArray.forEach(key => {
@@ -36,6 +39,8 @@ const envConfigFunc = (): envTypes => {
         JWT_EXPIRES: process.env.JWT_EXPIRES as string,
         SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
         SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
+        JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
+        JWT_REFRESH_EXPIRED: process.env.JWT_REFRESH_EXPIRED as string,
     }
 }
 
