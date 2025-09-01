@@ -22,7 +22,7 @@ export const CheckAuth = (...allowedRoles: string[]) => async (req: Request, res
         // const verifiedToken = verifyToken(accessToken, envVars.JWT_SECRET) as {role: string};  // --> approach-2
 
         if (!allowedRoles.includes(verifiedToken.role)) {
-            throw new AppError(httpStatus.FORBIDDEN, "You are not permitted to this route")
+            throw new AppError(httpStatus.FORBIDDEN, "You are not permitted to this route here.")
         }
 
         req.user = verifiedToken;

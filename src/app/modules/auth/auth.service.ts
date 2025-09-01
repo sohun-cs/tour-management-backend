@@ -3,10 +3,7 @@ import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import httpStatus from 'http-status-codes';
 import bcrypt from 'bcryptjs';
-
-import jwt, { SignOptions } from 'jsonwebtoken'
-import { envVars } from "../../config/env";
-
+import { getNewAccessTokenWithRefreshToken, GetUserToken } from "../../utils/GetUserToken";
 
 
 const credentialLogin = async (payload: Partial<IUser>) => {
@@ -27,28 +24,35 @@ const credentialLogin = async (payload: Partial<IUser>) => {
         throw new AppError(httpStatus.BAD_REQUEST, "Password incorrect");
     };
 
-    const jwtPayload = {
-        email: isUserExits.email,
-        password: isUserExits.password,
-        role: isUserExits.role
-    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {password: userPass, ...rest} = isUserExits;
+    const { password: userPass, ...rest } = isUserExits.toObject();
 
-    // const accessToken = generateToken(jwtPayload, envVars.JWT_SECRET, envVars.JWT_EXPIRES)
+    const getUserToken = GetUserToken(isUserExits)
 
-    const accessToken = jwt.sign(jwtPayload, envVars.JWT_SECRET, {expiresIn: envVars.JWT_EXPIRES} as SignOptions)
-    const refreshToken = jwt.sign(jwtPayload, envVars.JWT_REFRESH_SECRET, {expiresIn: envVars.JWT_REFRESH_EXPIRED} as SignOptions);
 
     return {
-        accessToken,
-        refreshToken,
+        accessToken: getUserToken.accessToken,
+        refreshToken: getUserToken.refreshToken,
         user: rest
     }
 
 };
 
+
+const getRefreshToken = async (refreshToken: string) => {
+
+    const getNewAccessToken = await getNewAccessTokenWithRefreshToken(refreshToken);
+
+    return {
+        accessToken: getNewAccessToken
+    }
+
+}
+
+
+
 export const AuthServices = {
-    credentialLogin
+    credentialLogin,
+    getRefreshToken
 }
