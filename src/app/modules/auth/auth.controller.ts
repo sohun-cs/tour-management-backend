@@ -50,7 +50,7 @@ const getRefreshToken = catchAsync(async (req: Request, res: Response, next: Nex
 });
 
 
-export const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     res.clearCookie("accessToken", {
         httpOnly: true,
@@ -72,11 +72,32 @@ export const logout = catchAsync(async (req: Request, res: Response, next: NextF
         data: null
     })
 
+});
+
+
+const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const decodedToken = req.user
+
+    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Password Reset Successfully",
+        data: null
+    })
+
 })
+
 
 
 export const AuthControllers = {
     credentialLogin,
     getRefreshToken,
-    logout
+    logout,
+    resetPassword
 }
