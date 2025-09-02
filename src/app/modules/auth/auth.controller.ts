@@ -6,6 +6,9 @@ import httpStatus from "http-status-codes";
 import { sendResponse } from "../../utils/sendResponse";
 import { AppError } from "../../errorHelpers/AppError";
 import { setCookie } from "../../utils/setCookie";
+import { GetUserToken } from "../../utils/GetUserToken";
+import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 
 
@@ -82,7 +85,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
     const newPassword = req.body.newPassword;
     const decodedToken = req.user
 
-    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
+    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -94,10 +97,28 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
 })
 
 
+const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+    }
+
+    const tokenInfo = GetUserToken(user);
+
+    setCookie(res, tokenInfo);
+
+    res.redirect(`${envVars.FRONTEND_URL}`)
+
+})
+
+
+
 
 export const AuthControllers = {
     credentialLogin,
     getRefreshToken,
     logout,
-    resetPassword
+    resetPassword,
+    googleCallbackController
 }

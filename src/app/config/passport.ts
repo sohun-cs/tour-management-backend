@@ -28,7 +28,7 @@ passport.use((
 
                     email: email,
                     name: profile.displayName,
-                    photo: profile.photos,
+                    photo: profile.photos?.[0].value,
                     role: Role.USER,
                     isVerified: true,
                     auths: [
@@ -49,3 +49,24 @@ passport.use((
         }
     })
 ))
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+passport.serializeUser((user: any, done: (err: any, id?: unknown) => void) => {
+    done(null, user._id)
+})
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+passport.deserializeUser(async(id: string, done: any)=> {
+try {
+    
+    const user = await User.findById(id);
+
+    done(null, user)
+
+} catch (error) {
+    done(error)
+}
+})
+

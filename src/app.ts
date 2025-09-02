@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser';
 import express_session from "express-session";
 import passport from 'passport';
 import { envVars } from './app/config/env';
+import './app/config/passport';
+
 
 const app: Application = express();
 
