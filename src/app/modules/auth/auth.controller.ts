@@ -41,7 +41,7 @@ const getRefreshToken = catchAsync(async (req: Request, res: Response, next: Nex
 
 
     sendResponse(res, {
-        statusCode: httpStatus.ACCEPTED,
+        statusCode: httpStatus.OK,
         success: true,
         message: "User logged in successfully",
         data: login
@@ -50,7 +50,33 @@ const getRefreshToken = catchAsync(async (req: Request, res: Response, next: Nex
 });
 
 
+export const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax"
+    });
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax"
+    })
+
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User logged out successfully",
+        data: null
+    })
+
+})
+
+
 export const AuthControllers = {
     credentialLogin,
-    getRefreshToken
+    getRefreshToken,
+    logout
 }

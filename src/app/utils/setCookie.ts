@@ -16,7 +16,7 @@ export const setCookie = async (res: Response, loginInfo: AuthInfo) => {
         })
     }
 
-    if (loginInfo.accessToken) {
+    if (loginInfo.refreshToken) {
         res.cookie('refreshToken', loginInfo.refreshToken, {
             httpOnly: true,
             secure: false

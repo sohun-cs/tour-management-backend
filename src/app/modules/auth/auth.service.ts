@@ -24,7 +24,6 @@ const credentialLogin = async (payload: Partial<IUser>) => {
         throw new AppError(httpStatus.BAD_REQUEST, "Password incorrect");
     };
 
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: userPass, ...rest } = isUserExits.toObject();
 
@@ -40,7 +39,7 @@ const credentialLogin = async (payload: Partial<IUser>) => {
 };
 
 
-const getRefreshToken = async (refreshToken: string) => {
+export const getRefreshToken = async (refreshToken: string) => {
 
     const getNewAccessToken = await getNewAccessTokenWithRefreshToken(refreshToken);
 
