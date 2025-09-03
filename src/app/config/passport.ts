@@ -3,7 +3,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy, Profile, VerifyCallback } from "passport-google-oauth20";
 import { envVars } from "./env";
 import { User } from "../modules/user/user.model";
-import { Role } from "../modules/user/user.interface";
+import { Activity, Role } from "../modules/user/user.interface";
 import { Strategy as LocalStrategy } from "passport-local";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
@@ -23,19 +23,29 @@ passport.use(
                 return done(null, false, { message: `${httpStatus.NOT_FOUND}: User not found` })
             }
 
-            const isGoogleAuthenticated = isUserExist.auths?.some(objects => objects.provider == "google");
+            if (isUserExist.isActive === Activity.BLOCKED || isUserExist.isActive === Activity.INACTIVE) {
+                return done(null, false, { message: `This user is ${isUserExist.isActive}` })
+            }
+
+            if (isUserExist.isDeleted) {
+                return done(null, false, { message: 'This user is blocked' })
+            }
+
+            const isGoogleAuthenticated = isUserExist.auths?.some(objects => objects.provider === "google");
 
             if (isGoogleAuthenticated) {
                 return done(null, false, { message: "This user is google authenticated" })
             }
 
-            const isPasswordMatched = bcrypt.compare(password, isUserExist.password as string);
+            const isPasswordMatched = await bcrypt.compare(password, isUserExist.password as string);
+
+            console.log("isPasswordMatched: ", isPasswordMatched)
 
             if (!isPasswordMatched) {
                 return done(null, false, { message: `${httpStatus.BAD_REQUEST}: Password does not matched` })
             }
 
-            return done(null, { message: "User created successfully" })
+            return done(null, isUserExist)
 
         } catch (error) {
             done(error);

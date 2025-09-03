@@ -20,6 +20,7 @@ export const createUserZodSchema = z.object({
     ).optional(),
 
     address: z.string({ message: "Address must be string" }).max(200, { message: "Address cannot exceed 200 characters long" }).optional(),
+    role: z.string().uppercase().optional()
 });
 
 
@@ -44,5 +45,5 @@ export const updateUserZodSchema = z.object({
     isDeleted: z.boolean({ message: "isDeleted must be true or false" }).optional(),
     isActive: z.enum(Object.values(Activity)).optional(),
     isVerified: z.boolean({ message: "isVerified must be true or false" }).optional(),
-    
+
 })

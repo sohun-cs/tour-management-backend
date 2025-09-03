@@ -35,15 +35,16 @@ import passport from "passport";
 const credentialLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate("local", async (err: any, user: any, info: any) => {
 
+
         if (err) {
-            throw new AppError(401, info.message)
+            return next(new AppError(401, info.message))
         }
 
         if (!user) {
-            throw new AppError(404, info.message);
+            return next(new AppError(404, info.message));
         }
 
-        const userToken = await GetUserToken(user)
+        const userToken = GetUserToken(user)
 
         // delete user.toObject().password
 
